@@ -22,6 +22,10 @@ go mod init train-go
 
 ```bash
 # Executa um arquivo Go diretamente
+go run standard/hello_world.go
+
+# Ou acessando o diretório do módulo:
+cd standard
 go run hello_world.go
 ```
 
@@ -29,7 +33,8 @@ go run hello_world.go
 Gera um arquivo binário compilado independente:
 
 ```bash
-# Compilar o arquivo
+# Compilar a partir da pasta standard/
+cd standard
 go build hello_world.go
 
 # Executar o binário gerado:
@@ -62,7 +67,9 @@ go test ./...
 
 ```text
 train-go/
-├── hello_world.go     # Entrada básica do programa (package main)
-├── go.mod             # Definição e dependências do módulo Go
+├── standard/          # Módulo com os fundamentos da linguagem Go
+│   ├── hello_world.go # Entrada básica do programa (package main)
+│   └── go.mod         # Definição do módulo Go (module standard)
+├── .gitignore         # Arquivos ignorados pelo Git
 └── README.md          # Guia de comandos e referências de estudo
 ```
