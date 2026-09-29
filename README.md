@@ -68,12 +68,10 @@ go test ./...
 ```text
 train-go/
 ├── standard/                  # Módulo com fundamentos da linguagem Go
-│   ├── main.go                # Ponto de entrada do programa (package main)
+│   ├── main.go                # Ponto de entrada, instâncias de tipos e fluxo de erros
 │   ├── types/                 # Modelagem e tipos do módulo standard
-│   │   └── user.go            # Struct User, construtor com UUID, methods e Stringer
+│   │   └── user.go            # Struct User, métodos (Set*), construtor, Stringer e validações
 │   └── go.mod                 # Definição do módulo Go (module train-go-standard)
-├── types/                     # Exemplos comparativos de funções e ponteiros
-│   └── types.go               # Demonstração de funções com value vs pointer receiver
 ├── .gitignore                 # Arquivos ignorados pelo Git
 └── README.md                  # Guia de comandos e referências de estudo
 ```
@@ -100,15 +98,15 @@ type User struct {
 ### 2. Funções vs Métodos com Receiver
 Em Go, funções podem ser associadas diretamente a uma struct através de **receivers**, comportando-se como métodos:
 
-- **Função comum (`types/types.go`)**:
+- **Função comum**:
   ```go
-  func ChangeEmail(user *User, email string) {
+  func SetEmail(user *User, email string) {
       user.Email = email
   }
   ```
 - **Método com Receiver (`standard/types/user.go`)**:
   ```go
-  func (user *User) ChangeEmail(email string) {
+  func (user *User) SetEmail(email string) {
       user.Email = email
   }
   ```
@@ -120,7 +118,7 @@ Em Go, funções podem ser associadas diretamente a uma struct através de **rec
   - Menos eficiente para structs médias ou grandes.
 - **Pointer Receiver (`func (user *User) ...`)**:
   - Recebe o ponteiro para o endereço de memória original.
-  - Permite alterar os dados da struct (`ChangeName`, `ChangePassword`, `ChangeEmail`).
+  - Permite alterar os dados da struct (`SetName`, `SetPassword`, `SetEmail`).
   - Mais eficiente, pois evita a cópia completa dos campos.
 
 ### 4. Padrão Construtor (`NewUser`)
@@ -144,4 +142,69 @@ Ao implementar o método `String() string`, a struct atende à interface nativa 
 func (user *User) String() string {
 	return fmt.Sprintf("{\n\tId: \t%s\n\tName: \t%s\n\tEmail: \t%s\n}", user.Id, user.Name, user.Email)
 }
+```
+
+---
+
+## ⚠️ Guia de Conceitos: Tratamento de Erros
+
+Diferente de outras linguagens (como Java, Python ou C#), **Go não possui exceções (`try/catch/throw`)**. Em vez disso, erros são tratados explicitamente como **valores de retorno** através da interface nativa `error`.
+
+### 1. Retorno Múltiplo e a Interface `error`
+Funções ou métodos propensos a falhas retornam o resultado esperado juntamente com um valor do tipo `error` (por convenção, como último valor retornado na assinatura):
+
+```go
+// Assinatura: (resultado, error)
+func (user *User) Greet(other_person string) (string, error)
+```
+
+- **Em caso de Sucesso**: Retorna o dado esperado e `nil` no erro.
+- **Em caso de Falha**: Retorna o *zero value* do dado (ex.: `""`, `0`, `nil`) e a instância do erro.
+
+### 2. Criando Erros com `errors.New` (`standard/types/user.go`)
+Para instanciar erros simples com mensagens descritivas, utiliza-se a função `errors.New` do pacote nativo `errors`:
+
+```go
+// Greet recebe o nome de quem será saudado e retorna uma mensagem ou erro caso o nome esteja vazio
+func (user *User) Greet(other_person string) (string, error) {
+	if other_person == "" {
+		return "", errors.New("The other person's name cannot be empty!")
+	}
+	return fmt.Sprintf("Hello, %s, from %s!", other_person, user.Name), nil
+}
+```
+
+### 3. Verificação Idiomática (`if err != nil`)
+Em Go, o fluxo de controle de erros é explícito: deve-se verificar o erro imediatamente após a chamada da função:
+
+```go
+msg, err := user.Greet("")
+if err != nil {
+	// Tratamento do erro (ex.: logar, tentar novamente, encerrar, etc.)
+}
+```
+
+> [!NOTE]
+> Por convenção idiomática na comunidade Go, costuma-se nomear a variável de erro como `err` para evitar sombreamento (*shadowing*) do tipo primitivo `error`.
+
+### 4. Logging e Interrupção com `log.Fatal` (`standard/main.go`)
+No ponto de entrada (`main.go`), o pacote `log` é utilizado para configurar mensagens padronizadas e interromper a execução diante de um erro impeditivo:
+
+```go
+// Configuração do Logger:
+log.SetPrefix("train-go: ") // Adiciona um prefixo customizado nas mensagens de log
+log.SetFlags(0)             // Remove carimbos de data/hora (flags padrão)
+
+// Execução e tratamento:
+msg, error := user.Greet("")
+if error != nil {
+	log.Fatal(error) // Exibe a mensagem de erro formatada no stderr e encerra o programa (os.Exit(1))
+}
+fmt.Println(msg)
+```
+
+#### Saída exibida no terminal em caso de erro:
+```text
+train-go: The other person's name cannot be empty!
+exit status 1
 ```
