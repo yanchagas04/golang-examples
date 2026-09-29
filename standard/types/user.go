@@ -1,6 +1,7 @@
 package types
 
 import (
+	"errors"
 	"fmt"
 	"uuid"
 )
@@ -39,22 +40,33 @@ func (user *User) GetID() uuid.UUID {
 	return user.Id
 }
 
-// Change the name of a user
-func (user *User) ChangeName(name string) {
+// Set the name of a user
+func (user *User) SetName(name string) {
 	user.Name = name
 }
 
-// Change the password of a user
-func (user *User) ChangePassword(password string) {
+// Set the password of a user
+func (user *User) SetPassword(password string) {
 	user.password = password
 }
 
-// Change the email of a user
-func (user *User) ChangeEmail(email string) {
+// Set the email of a user
+func (user *User) SetEmail(email string) {
 	user.Email = email
 }
 
 // String method to print the user
 func (user *User) String() string {
 	return fmt.Sprintf("{\n\tId: \t%s\n\tName: \t%s\n\tEmail: \t%s\n}", user.Id, user.Name, user.Email)
+}
+
+// Greet a user
+//
+// It receives the name of the other person to greet and returns the greeting message
+// and an error if the other person's name is empty
+func (user *User) Greet(other_person string) (string, error) {
+	if other_person == "" {
+		return "", errors.New("The other person's name cannot be empty!")
+	}
+	return fmt.Sprintf("Hello, %s, from %s!", other_person, user.Name), nil
 }
