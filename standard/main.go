@@ -7,9 +7,8 @@ import (
 )
 
 func main() {
-	log.SetPrefix("train-go: ")
-	log.SetFlags(0)
 
+	log.SetFlags(log.Ldate | log.Ltime)
 	fmt.Println("Hello World!")
 
 	// Types:
@@ -21,7 +20,12 @@ func main() {
 	// Tratamento de Erros:
 	msg, error := user.Greet("")
 	if error != nil {
-		log.Fatal(error)
+		log.Println(error)
 	}
 	fmt.Println(msg)
+
+	// Random
+	lotery := types.GenerateLotery()
+	lotery.Generate()
+	fmt.Println("Os números sorteados foram:", lotery.Results())
 }
