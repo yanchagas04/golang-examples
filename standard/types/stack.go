@@ -25,7 +25,7 @@ type StackInterface[T any] interface {
 Tipo que representa uma Pilha, onde o último item que entra é o primeiro que sai.
 */
 type Stack[T any] struct {
-	stack []T
+	items []T
 }
 
 // Cria um nova pilha
@@ -35,9 +35,9 @@ func NewStack[T any]() *Stack[T] {
 
 // Retira o último elemento da pilha
 func (s *Stack[T]) Pop() (item T, err error) {
-	if s.stack != nil {
-		item = s.stack[len(s.stack)-1]     // Pega o último item
-		s.stack = s.stack[:len(s.stack)-1] // Remove ele da stack
+	if s.items != nil {
+		item = s.items[len(s.items)-1]     // Pega o último item
+		s.items = s.items[:len(s.items)-1] // Remove ele da stack
 		return item, nil
 	}
 	return item, errors.New("Stack is empty")
@@ -45,21 +45,21 @@ func (s *Stack[T]) Pop() (item T, err error) {
 
 // Adiciona um elemento na pilha
 func (s *Stack[T]) Push(item T) {
-	s.stack = append(s.stack, item)
+	s.items = append(s.items, item)
 }
 
 // Exibe o último elemento da pilha
 func (s *Stack[T]) Top() (item T, err error) {
-	if s.stack != nil {
-		return s.stack[len(s.stack)-1], nil
+	if s.items != nil {
+		return s.items[len(s.items)-1], nil
 	}
 	return item, errors.New("Stack is empty")
 }
 
 func (s *Stack[T]) String() string {
 	res := "Stack:\n"
-	for i := range s.stack {
-		res += "\t" + fmt.Sprint(s.stack[i]) + "\n"
+	for i := range s.items {
+		res += "\t" + fmt.Sprint(s.items[i]) + "\n"
 	}
 	return res
 }
