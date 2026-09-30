@@ -28,4 +28,14 @@ func main() {
 	lotery := types.GenerateLotery()
 	lotery.Generate()
 	fmt.Println("Os números sorteados foram:", lotery.Results())
+
+	// Map sem Make (não recomendado)
+	sites := map[string]string{
+		"Google": "https://www.google.com",
+		"Bing":   "https://www.bing.com",
+	}
+	fmt.Println("Site: \tURL: ")
+	for k, v := range sites {
+		fmt.Printf("%s\t%s\n", k, v)
+	}
 }
