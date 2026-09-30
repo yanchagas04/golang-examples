@@ -38,4 +38,9 @@ func main() {
 	for k, v := range sites {
 		fmt.Printf("%s\t%s\n", k, v)
 	}
+	println(sites["Google"]) // Acessa o valor da chave Google
+	delete(sites, "Bing")   // Remove o item Bing do map
+	println(sites)
+	clear(sites)            // Remove todos os itens do map
+	println(sites)
 }
