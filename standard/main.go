@@ -45,6 +45,7 @@ func main() {
 	// println(sites)
 
 	// Pilha (Stack)
+	fmt.Println("Prints de Pilha:\n")
 	pilha := new(types.Stack[int])
 	teste, erro := pilha.Pop()
 	if erro != nil {
@@ -55,10 +56,22 @@ func main() {
 	pilha.Push(1)
 	pilha.Push(2)
 	pilha.Push(3)
-	fmt.Println(pilha)
+	fmt.Println("\n", pilha)
 	top, _ := pilha.Top()
-	log.Println(top)
+	println(top)
 	pilha.Pop()
 	top, _ = pilha.Top()
-	log.Println(top)
+	println(top)
+
+	// Fila
+	fmt.Println("\nPrints de Pilha:\n")
+	fila := types.NewQueue[int]()
+	fila.Add(1)
+	fila.Add(2)
+	fila.Add(3)
+	fmt.Println(fila)
+	fila.Remove()
+	fmt.Println(fila)
+	frente, _ := fila.Peek()
+	fmt.Println(frente)
 }
