@@ -9,9 +9,8 @@ import (
 # Interface
 
 As interfaces em Go, assim como em outras linguagens, servem para verificar se seu tipo (ou "Classe") implementa todas as funções definidas por essa interface.
-	- Funciona como um contrato que o tipo deve seguir para ser considerado do mesmo tipo da interface.
-	- Permite que você utilize vários tipos que implementam as funções dessa interface como se fossem do mesmo tipo.
-
+  - Funciona como um contrato que o tipo deve seguir para ser considerado do mesmo tipo da interface.
+  - Permite que você utilize vários tipos que implementam as funções dessa interface como se fossem do mesmo tipo.
 */
 type StackInterface[T any] interface {
 	Top() (T, error)
@@ -48,7 +47,7 @@ func (s *Stack[T]) Push(item T) {
 	s.items = append(s.items, item)
 }
 
-// Exibe o último elemento da pilha
+// Retorna o último elemento da pilha
 func (s *Stack[T]) Top() (item T, err error) {
 	if s.items != nil {
 		return s.items[len(s.items)-1], nil
@@ -57,7 +56,10 @@ func (s *Stack[T]) Top() (item T, err error) {
 }
 
 func (s *Stack[T]) String() string {
-	res := "Stack:\n"
+	if len(s.items) < 1 {
+		return "Stack is empty"
+	}
+	var res string
 	for i := range s.items {
 		res += "\t" + fmt.Sprint(s.items[i]) + "\n"
 	}
